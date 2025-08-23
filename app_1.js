@@ -1,853 +1,587 @@
-// Vignesh Chandrasekaran Harmonica Website - Services Version JavaScript (Fixed)
+// Vignesh Chandrasekaran Harmonica Website JavaScript - Fixed for Netlify
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize all components
-    initSmoothScrolling();
-    initBookingForm();
-    initNavbarScroll();
-    initVideoCards();
-    initServiceInteractions();
-    initScrollAnimations();
-    initSocialLinks();
-    
-    console.log('All JavaScript components initialized successfully for Services version (Fixed)');
+    try {
+        console.log('Initializing website...');
+        
+        // Initialize all features with error handling
+        initSmoothScrolling();
+        initActiveNavigation();
+        initMobileMenu();
+        initVideoInteractions();
+        initServiceCardInteractions();
+        initAnimations();
+        initHashNavigation();
+        
+        console.log('Website initialized successfully');
+    } catch (error) {
+        console.error('Error initializing website:', error);
+    }
 });
 
-// Fixed smooth scrolling for navigation links
+// Fixed smooth scrolling navigation
 function initSmoothScrolling() {
-    const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
-    
-    navLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            const targetId = this.getAttribute('href').substring(1);
-            const targetSection = document.getElementById(targetId);
-            
-            console.log('Navigation clicked:', targetId, 'Target found:', !!targetSection);
-            
-            if (targetSection) {
-                const navbarHeight = document.querySelector('.navbar')?.offsetHeight || 80;
-                const ribbonHeight = 4; // Account for burgundy ribbon
-                const targetPosition = targetSection.offsetTop - navbarHeight - ribbonHeight - 20;
+    try {
+        const navLinks = document.querySelectorAll('.nav-link');
+        console.log('Found nav links:', navLinks.length);
+        
+        navLinks.forEach((link, index) => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Nav link clicked:', this.getAttribute('href'));
                 
-                window.scrollTo({
-                    top: Math.max(0, targetPosition),
-                    behavior: 'smooth'
+                const targetHash = this.getAttribute('href');
+                
+                // Ensure hash starts with #
+                if (!targetHash || !targetHash.startsWith('#')) {
+                    console.warn('Invalid hash:', targetHash);
+                    return;
+                }
+                
+                const targetSection = document.querySelector(targetHash);
+                console.log('Target section found:', !!targetSection);
+                
+                if (targetSection) {
+                    // Close mobile menu if open
+                    closeMobileMenu();
+                    
+                    // Update active nav state immediately
+                    navLinks.forEach(navLink => navLink.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Calculate scroll position with offset for fixed header
+                    const headerHeight = 120; // Fixed header + ribbon height
+                    const targetPosition = targetSection.offsetTop - headerHeight;
+                    
+                    // Smooth scroll to section
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Update URL hash
+                    if (history.pushState) {
+                        history.pushState(null, null, targetHash);
+                    } else {
+                        window.location.hash = targetHash;
+                    }
+                    
+                    console.log('Scrolled to:', targetHash);
+                } else {
+                    console.error('Section not found for hash:', targetHash);
+                }
+            });
+        });
+        
+        console.log('Smooth scrolling initialized');
+    } catch (error) {
+        console.error('Error initializing smooth scrolling:', error);
+    }
+}
+
+// Active navigation based on scroll position - fixed
+function initActiveNavigation() {
+    try {
+        const sections = document.querySelectorAll('.section');
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        console.log('Found sections for navigation:', sections.length);
+        
+        if (sections.length === 0 || navLinks.length === 0) {
+            console.warn('No sections or nav links found for active navigation');
+            return;
+        }
+
+        let isScrolling = false;
+        
+        window.addEventListener('scroll', function() {
+            if (isScrolling) return;
+            
+            isScrolling = true;
+            requestAnimationFrame(() => {
+                const scrollPosition = window.scrollY + 150; // Offset for header
+                let currentSection = '';
+                
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    const sectionHeight = section.offsetHeight;
+                    
+                    if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                        currentSection = section.getAttribute('id');
+                    }
                 });
                 
-                // Update active navigation after scrolling
+                if (currentSection) {
+                    updateActiveNavLink(currentSection);
+                }
+                
+                isScrolling = false;
+            });
+        });
+
+        function updateActiveNavLink(activeSectionId) {
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                const linkHref = link.getAttribute('href');
+                if (linkHref === '#' + activeSectionId) {
+                    link.classList.add('active');
+                }
+            });
+        }
+        
+        // Set initial active state
+        updateActiveNavLink('home');
+        
+        console.log('Active navigation initialized');
+    } catch (error) {
+        console.error('Error initializing active navigation:', error);
+    }
+}
+
+// Fixed mobile menu functionality
+function initMobileMenu() {
+    try {
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        if (!hamburger || !navMenu) {
+            console.warn('Mobile menu elements not found');
+            return;
+        }
+
+        // Toggle menu on hamburger click
+        hamburger.addEventListener('click', function(e) {
+            e.stopPropagation();
+            e.preventDefault();
+            toggleMobileMenu();
+            console.log('Mobile menu toggled');
+        });
+
+        // Close menu when clicking nav links
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                closeMobileMenu();
+            });
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
+                closeMobileMenu();
+            }
+        });
+
+        // Close menu on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeMobileMenu();
+            }
+        });
+
+        // Close menu on window resize to desktop
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                closeMobileMenu();
+            }
+        });
+        
+        console.log('Mobile menu initialized');
+    } catch (error) {
+        console.error('Error initializing mobile menu:', error);
+    }
+}
+
+function toggleMobileMenu() {
+    try {
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
+        
+        if (hamburger && navMenu) {
+            const isActive = hamburger.classList.contains('active');
+            
+            if (isActive) {
+                hamburger.classList.remove('active');
+                navMenu.classList.remove('active');
+            } else {
+                hamburger.classList.add('active');
+                navMenu.classList.add('active');
+            }
+            
+            console.log('Mobile menu is now:', isActive ? 'closed' : 'open');
+        }
+    } catch (error) {
+        console.error('Error toggling mobile menu:', error);
+    }
+}
+
+function closeMobileMenu() {
+    try {
+        const hamburger = document.querySelector('.hamburger');
+        const navMenu = document.querySelector('.nav-menu');
+        
+        if (hamburger && navMenu) {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+        }
+    } catch (error) {
+        console.error('Error closing mobile menu:', error);
+    }
+}
+
+// Hash navigation for direct links - fixed
+function initHashNavigation() {
+    try {
+        // Handle initial hash on page load
+        window.addEventListener('load', function() {
+            if (window.location.hash) {
                 setTimeout(() => {
-                    updateActiveNavigation();
-                }, 500);
-                
-                console.log('Scrolling to:', targetId, 'Position:', targetPosition);
-            } else {
-                console.error('Target section not found:', targetId);
+                    const targetSection = document.querySelector(window.location.hash);
+                    if (targetSection) {
+                        const headerHeight = 120;
+                        const targetPosition = targetSection.offsetTop - headerHeight;
+                        
+                        window.scrollTo({
+                            top: targetPosition,
+                            behavior: 'smooth'
+                        });
+                        
+                        console.log('Initial hash navigation to:', window.location.hash);
+                    }
+                }, 300);
             }
         });
-    });
 
-    // Handle CTA button clicks
-    const ctaButtons = document.querySelectorAll('a[href="#booking"], .cta-button');
-    ctaButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            const targetSection = document.getElementById('booking');
-            if (targetSection) {
-                const navbarHeight = document.querySelector('.navbar')?.offsetHeight || 80;
-                const ribbonHeight = 4;
-                const targetPosition = targetSection.offsetTop - navbarHeight - ribbonHeight - 20;
-                
+        // Handle browser back/forward navigation
+        window.addEventListener('popstate', function() {
+            if (window.location.hash) {
+                const targetSection = document.querySelector(window.location.hash);
+                if (targetSection) {
+                    const headerHeight = 120;
+                    const targetPosition = targetSection.offsetTop - headerHeight;
+                    
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            } else {
+                // No hash, scroll to top
                 window.scrollTo({
-                    top: Math.max(0, targetPosition),
+                    top: 0,
                     behavior: 'smooth'
                 });
-                
-                console.log('CTA button clicked, scrolling to booking section');
-            } else {
-                console.error('Booking section not found');
             }
         });
-    });
-    
-    console.log('Fixed smooth scrolling initialized for', navLinks.length, 'navigation links');
+        
+        console.log('Hash navigation initialized');
+    } catch (error) {
+        console.error('Error initializing hash navigation:', error);
+    }
 }
 
-// Enhanced service card interactions - Fixed
-function initServiceInteractions() {
-    const serviceCards = document.querySelectorAll('.service-card');
-    
-    serviceCards.forEach(card => {
-        card.addEventListener('click', function(e) {
-            e.preventDefault();
-            
-            // Get service info
-            const serviceTitle = this.querySelector('h3')?.textContent?.trim();
-            const serviceSelect = document.getElementById('service');
-            
-            console.log('Service card clicked:', serviceTitle);
-            
-            if (serviceSelect && serviceTitle) {
-                let serviceValue = '';
-                
-                // Fixed mapping for all three services
-                if (serviceTitle.includes('Harmonica Lessons') || serviceTitle.includes('Lessons')) {
-                    serviceValue = 'lessons';
-                } else if (serviceTitle.includes('Harmonica Maintenance') || serviceTitle.includes('Maintenance')) {
-                    serviceValue = 'maintenance';
-                } else if (serviceTitle.includes('Corporate Workshops') || serviceTitle.includes('Workshops')) {
-                    serviceValue = 'workshops';
-                }
-                
-                console.log('Mapped service value:', serviceValue);
-                
-                if (serviceValue) {
-                    // Set the service selection
-                    serviceSelect.value = serviceValue;
-                    console.log('Service auto-selected:', serviceValue);
-                    
-                    // Trigger change event
-                    const changeEvent = new Event('change', { bubbles: true });
-                    serviceSelect.dispatchEvent(changeEvent);
-                    
-                    // Add visual feedback
-                    serviceSelect.style.borderColor = '#722F37';
-                    serviceSelect.style.backgroundColor = 'rgba(114, 47, 55, 0.05)';
-                    
-                    // Scroll to booking section
-                    const bookingSection = document.getElementById('booking');
-                    if (bookingSection) {
-                        const navbarHeight = document.querySelector('.navbar')?.offsetHeight || 80;
-                        const ribbonHeight = 4;
-                        const targetPosition = bookingSection.offsetTop - navbarHeight - ribbonHeight - 20;
-                        
-                        setTimeout(() => {
-                            window.scrollTo({
-                                top: Math.max(0, targetPosition),
-                                behavior: 'smooth'
-                            });
-                        }, 200);
-                        
-                        // Focus on the name field after scrolling
-                        setTimeout(() => {
-                            const nameField = document.getElementById('name');
-                            if (nameField) {
-                                nameField.focus();
-                            }
-                        }, 1200);
-                    }
-                }
-            }
-        });
+// Fixed video interactions
+function initVideoInteractions() {
+    try {
+        const videoCards = document.querySelectorAll('.video-card');
+        const videoLinks = document.querySelectorAll('.video-link');
         
-        // Add visual feedback for clickability
-        card.style.cursor = 'pointer';
-        card.setAttribute('title', 'Click to book this service');
-        card.setAttribute('role', 'button');
-        card.setAttribute('tabindex', '0');
+        console.log('Found video cards:', videoCards.length);
+        console.log('Found video links:', videoLinks.length);
         
-        // Enhanced hover effects
-        card.addEventListener('mouseenter', function() {
-            if (!this.style.transform.includes('translateY')) {
-                this.style.transform = 'translateY(-6px)';
-            }
-        });
-        
-        card.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-        });
-        
-        // Keyboard support
-        card.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                this.click();
-            }
-        });
-    });
-    
-    // Handle service offering interactions within lessons card
-    const offeringItems = document.querySelectorAll('.offering-item');
-    offeringItems.forEach(item => {
-        item.addEventListener('click', function(e) {
-            e.stopPropagation(); // Prevent parent card click
+        // Ensure all video links open in new tab
+        videoLinks.forEach((link, index) => {
+            // Make sure target="_blank" is set
+            link.setAttribute('target', '_blank');
+            link.setAttribute('rel', 'noopener noreferrer');
             
-            const offeringName = this.querySelector('h5')?.textContent?.trim();
-            const serviceSelect = document.getElementById('service');
-            const messageField = document.getElementById('message');
-            
-            console.log('Lesson offering clicked:', offeringName);
-            
-            if (serviceSelect) {
-                serviceSelect.value = 'lessons';
+            link.addEventListener('click', function(e) {
+                console.log('Video link clicked:', this.href);
                 
-                // Add specific offering info to message
-                if (messageField && offeringName) {
-                    let currentMessage = messageField.value.trim();
-                    const offeringText = `I'm interested in ${offeringName} lessons.`;
-                    
-                    if (currentMessage) {
-                        messageField.value = currentMessage + '\n\n' + offeringText;
-                    } else {
-                        messageField.value = offeringText;
-                    }
-                }
-                
-                // Scroll to booking
-                const bookingSection = document.getElementById('booking');
-                if (bookingSection) {
-                    const navbarHeight = document.querySelector('.navbar')?.offsetHeight || 80;
-                    const ribbonHeight = 4;
-                    const targetPosition = bookingSection.offsetTop - navbarHeight - ribbonHeight - 20;
-                    
+                // Add visual feedback
+                const card = this.closest('.video-card');
+                if (card) {
+                    card.style.transform = 'scale(0.98)';
                     setTimeout(() => {
-                        window.scrollTo({
-                            top: Math.max(0, targetPosition),
-                            behavior: 'smooth'
-                        });
-                    }, 200);
-                }
-            }
-        });
-        
-        // Add hover effect to offering items
-        item.addEventListener('mouseenter', function() {
-            this.style.transform = 'scale(1.02)';
-            this.style.cursor = 'pointer';
-        });
-        
-        item.addEventListener('mouseleave', function() {
-            this.style.transform = 'scale(1)';
-        });
-    });
-    
-    // Handle workshop format interactions
-    const formatItems = document.querySelectorAll('.format-item');
-    formatItems.forEach(item => {
-        item.addEventListener('click', function(e) {
-            e.stopPropagation(); // Prevent parent card click
-            
-            const formatName = this.querySelector('h5')?.textContent?.trim();
-            const serviceSelect = document.getElementById('service');
-            const messageField = document.getElementById('message');
-            
-            console.log('Workshop format clicked:', formatName);
-            
-            if (serviceSelect) {
-                serviceSelect.value = 'workshops';
-                
-                // Add specific format info to message
-                if (messageField && formatName) {
-                    let currentMessage = messageField.value.trim();
-                    const formatText = `I'm interested in the ${formatName} workshop format.`;
-                    
-                    if (currentMessage) {
-                        messageField.value = currentMessage + '\n\n' + formatText;
-                    } else {
-                        messageField.value = formatText;
-                    }
+                        card.style.transform = '';
+                    }, 150);
                 }
                 
-                // Scroll to booking
-                const bookingSection = document.getElementById('booking');
-                if (bookingSection) {
-                    const navbarHeight = document.querySelector('.navbar')?.offsetHeight || 80;
-                    const ribbonHeight = 4;
-                    const targetPosition = bookingSection.offsetTop - navbarHeight - ribbonHeight - 20;
-                    
-                    setTimeout(() => {
-                        window.scrollTo({
-                            top: Math.max(0, targetPosition),
-                            behavior: 'smooth'
-                        });
-                    }, 200);
-                }
-            }
-        });
-        
-        // Add hover effect to format items
-        item.addEventListener('mouseenter', function() {
-            this.style.transform = 'scale(1.02)';
-            this.style.cursor = 'pointer';
-        });
-        
-        item.addEventListener('mouseleave', function() {
-            this.style.transform = 'scale(1)';
-        });
-    });
-    
-    console.log('Service interactions initialized for', serviceCards.length, 'service cards');
-}
-
-// Enhanced video card interactions
-function initVideoCards() {
-    const videoCards = document.querySelectorAll('.video-card');
-    
-    videoCards.forEach((card, index) => {
-        const playButton = card.querySelector('.play-button');
-        const videoTitle = card.querySelector('.video-title')?.textContent?.trim();
-        
-        if (playButton && videoTitle) {
-            // Play button click handler
-            playButton.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                console.log('Play button clicked for:', videoTitle);
-                
-                // Show confirmation dialog
-                const userConfirmed = confirm(`🎵 Open "${videoTitle}" on YouTube?\n\nThis will redirect you to Vignesh's YouTube channel where you can watch this performance.`);
-                
-                if (userConfirmed) {
-                    window.open('https://www.youtube.com/@vig_gy', '_blank', 'noopener,noreferrer');
-                    console.log('Redirecting to YouTube channel');
+                // Ensure the link opens in new window/tab
+                try {
+                    window.open(this.href, '_blank', 'noopener,noreferrer');
+                } catch (error) {
+                    console.warn('Fallback: setting window location');
+                    // Fallback
+                    window.open(this.href, '_blank');
                 }
             });
-            
-            // Make the entire card clickable
-            card.addEventListener('click', function(e) {
-                if (!e.target.closest('a')) {
-                    console.log('Video card clicked:', videoTitle);
-                    playButton.click();
-                }
-            });
-            
-            // Add keyboard support
-            card.setAttribute('tabindex', '0');
-            card.setAttribute('role', 'button');
-            card.setAttribute('aria-label', `Play video: ${videoTitle}`);
-            
-            card.addEventListener('keydown', function(e) {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    playButton.click();
-                }
-            });
-            
-            // Enhanced hover effects
+        });
+        
+        // Card hover effects
+        videoCards.forEach(card => {
             card.addEventListener('mouseenter', function() {
-                this.style.cursor = 'pointer';
-                const playBtn = this.querySelector('.play-button');
-                const thumbnail = this.querySelector('.thumbnail-placeholder');
-                
-                if (playBtn) {
-                    playBtn.style.transform = 'translate(-50%, -50%) scale(1.15)';
-                    playBtn.style.transition = 'transform 0.3s ease';
-                }
-                
-                if (thumbnail) {
-                    thumbnail.style.transform = 'scale(1.02)';
-                    thumbnail.style.transition = 'transform 0.3s ease';
-                }
+                this.style.borderColor = 'var(--color-burgundy-primary)';
             });
             
             card.addEventListener('mouseleave', function() {
-                const playBtn = this.querySelector('.play-button');
-                const thumbnail = this.querySelector('.thumbnail-placeholder');
-                
-                if (playBtn) {
-                    playBtn.style.transform = 'translate(-50%, -50%) scale(1)';
-                }
-                
-                if (thumbnail) {
-                    thumbnail.style.transform = 'scale(1)';
-                }
+                this.style.borderColor = 'var(--color-card-border)';
             });
-        }
-    });
-    
-    console.log('Video cards initialized:', videoCards.length, 'cards');
-}
-
-// Social media links functionality
-function initSocialLinks() {
-    const socialLinks = document.querySelectorAll('.social-link');
-    
-    socialLinks.forEach(link => {
-        // Ensure external links open in new tab with security
-        if (link.href && link.href.startsWith('http')) {
-            link.target = '_blank';
-            link.rel = 'noopener noreferrer';
-        }
-        
-        // Add click tracking
-        link.addEventListener('click', function(e) {
-            const platform = this.href.includes('instagram') ? 'Instagram' : 
-                           this.href.includes('facebook') ? 'Facebook' : 
-                           this.href.includes('youtube') ? 'YouTube' : 'Social';
-            console.log('Social media clicked:', platform, this.href);
         });
         
-        // Enhanced hover effects
-        link.addEventListener('mouseenter', function() {
-            const icon = this.querySelector('.social-icon');
-            if (icon) {
-                icon.style.transform = 'scale(1.2)';
-                icon.style.transition = 'transform 0.2s ease';
-            }
-            this.style.transform = 'translateY(-1px)';
-        });
-        
-        link.addEventListener('mouseleave', function() {
-            const icon = this.querySelector('.social-icon');
-            if (icon) {
-                icon.style.transform = 'scale(1)';
-            }
-            this.style.transform = 'translateY(0)';
-        });
-    });
-    
-    console.log('Social media links initialized:', socialLinks.length, 'links');
-}
-
-// Fixed booking form with proper submission handling
-function initBookingForm() {
-    const form = document.getElementById('bookingForm');
-    if (!form) {
-        console.error('Booking form not found');
-        return;
+        console.log('Video interactions initialized');
+    } catch (error) {
+        console.error('Error initializing video interactions:', error);
     }
-    
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
+}
+
+// Service card interactions
+function initServiceCardInteractions() {
+    try {
+        const serviceCards = document.querySelectorAll('.service-card');
         
-        console.log('Form submission triggered');
-        
-        // Clear previous validation states
-        clearValidationStates();
-        
-        // Validate form
-        const isValid = validateForm();
-        
-        if (isValid) {
-            handleFormSubmission();
-        } else {
-            console.log('Form validation failed');
-            // Scroll to first error field
-            const firstError = form.querySelector('.error');
-            if (firstError) {
-                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                setTimeout(() => {
-                    firstError.focus();
-                }, 300);
-            }
-        }
-    });
-    
-    // Real-time validation on blur
-    const inputs = form.querySelectorAll('input, select, textarea');
-    inputs.forEach(input => {
-        input.addEventListener('blur', function() {
-            validateField(this);
-        });
-        
-        input.addEventListener('input', function() {
-            if (this.classList.contains('error')) {
-                validateField(this);
-            }
-        });
-        
-        // Enhanced handling for select elements
-        if (input.tagName === 'SELECT') {
-            input.addEventListener('change', function() {
-                validateField(this);
-                console.log('Select changed:', this.id, this.value);
-                
-                // Reset styles when selection is made
-                this.style.borderColor = '';
-                this.style.backgroundColor = '';
+        serviceCards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.borderColor = 'var(--color-burgundy-primary)';
             });
-        }
-    });
-    
-    console.log('Fixed booking form initialized with', inputs.length, 'form controls');
-}
-
-function validateForm() {
-    const requiredFields = [
-        { id: 'name', message: 'Full name is required' },
-        { id: 'email', message: 'Email address is required' },
-        { id: 'service', message: 'Please select a service' },
-        { id: 'lessonType', message: 'Please select a lesson type' }
-    ];
-    
-    let isValid = true;
-    
-    requiredFields.forEach(field => {
-        const input = document.getElementById(field.id);
-        if (input && !input.value.trim()) {
-            showFieldError(input, field.message);
-            isValid = false;
-        } else if (input) {
-            // Additional validation for email
-            if (field.id === 'email' && !isValidEmail(input.value)) {
-                showFieldError(input, 'Please enter a valid email address');
-                isValid = false;
-            } else {
-                showFieldSuccess(input);
-            }
-        }
-    });
-    
-    console.log('Form validation result:', isValid);
-    return isValid;
-}
-
-function validateField(field) {
-    if (!field) return false;
-    
-    const value = field.value.trim();
-    
-    // Clear previous states
-    field.classList.remove('error', 'success');
-    const existingError = field.parentNode.querySelector('.error-message');
-    if (existingError) {
-        existingError.remove();
-    }
-    
-    // Check if required field is empty
-    if (field.hasAttribute('required') && !value) {
-        const label = field.parentNode.querySelector('.form-label');
-        const fieldName = label ? label.textContent.replace(' *', '') : 'This field';
-        showFieldError(field, `${fieldName} is required`);
-        return false;
-    }
-    
-    // Email validation
-    if (field.type === 'email' && value && !isValidEmail(value)) {
-        showFieldError(field, 'Please enter a valid email address');
-        return false;
-    }
-    
-    // Phone validation (optional but if provided, should be reasonable)
-    if (field.type === 'tel' && value && value.length < 8) {
-        showFieldError(field, 'Please enter a valid phone number');
-        return false;
-    }
-    
-    // If validation passes
-    if (value) {
-        showFieldSuccess(field);
-    }
-    
-    return true;
-}
-
-function showFieldError(field, message) {
-    if (!field) return;
-    
-    field.classList.add('error');
-    field.classList.remove('success');
-    
-    // Remove existing error message
-    const existingError = field.parentNode.querySelector('.error-message');
-    if (existingError) {
-        existingError.remove();
-    }
-    
-    // Add new error message with animation
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'error-message';
-    errorDiv.textContent = message;
-    errorDiv.style.opacity = '0';
-    errorDiv.style.transform = 'translateY(-5px)';
-    field.parentNode.appendChild(errorDiv);
-    
-    // Animate error message appearance
-    requestAnimationFrame(() => {
-        errorDiv.style.opacity = '1';
-        errorDiv.style.transform = 'translateY(0)';
-        errorDiv.style.transition = 'all 0.3s ease';
-    });
-}
-
-function showFieldSuccess(field) {
-    if (!field) return;
-    
-    field.classList.add('success');
-    field.classList.remove('error');
-    
-    // Remove error message if exists
-    const existingError = field.parentNode.querySelector('.error-message');
-    if (existingError) {
-        existingError.style.opacity = '0';
-        setTimeout(() => {
-            if (existingError.parentNode) {
-                existingError.remove();
-            }
-        }, 300);
-    }
-}
-
-function clearValidationStates() {
-    const form = document.getElementById('bookingForm');
-    if (!form) return;
-    
-    const inputs = form.querySelectorAll('input, select, textarea');
-    const errorMessages = form.querySelectorAll('.error-message');
-    const successMessage = form.querySelector('.success-message');
-    
-    inputs.forEach(input => {
-        input.classList.remove('error', 'success');
-        input.style.borderColor = '';
-        input.style.backgroundColor = '';
-    });
-    
-    errorMessages.forEach(error => {
-        error.remove();
-    });
-    
-    if (successMessage) {
-        successMessage.remove();
-    }
-}
-
-function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
-
-function handleFormSubmission() {
-    const form = document.getElementById('bookingForm');
-    const submitButton = form.querySelector('button[type="submit"]');
-    const originalButtonText = submitButton.textContent;
-    
-    // Show loading state
-    submitButton.innerHTML = '<span style="display: inline-flex; align-items: center; gap: 8px;">Sending... <span style="animation: spin 1s linear infinite;">⏳</span></span>';
-    submitButton.disabled = true;
-    form.classList.add('loading');
-    
-    // Collect form data
-    const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-    
-    // Add the backend email (hidden from UI)
-    data.recipientEmail = 'vignesh.2523@gmail.com';
-    
-    console.log('Processing form submission - data will be sent to backend email:', data.recipientEmail);
-    
-    // Simulate form submission (in real implementation, this would send to backend)
-    setTimeout(() => {
-        // Reset button state
-        submitButton.textContent = originalButtonText;
-        submitButton.disabled = false;
-        form.classList.remove('loading');
-        
-        // Show success message
-        showSuccessMessage(data.service);
-        
-        // Reset form with animation
-        const inputs = form.querySelectorAll('input, select, textarea');
-        inputs.forEach((input, index) => {
-            setTimeout(() => {
-                input.value = '';
-                input.style.transform = 'scale(0.98)';
-                setTimeout(() => {
-                    input.style.transform = 'scale(1)';
-                    input.style.transition = 'transform 0.2s ease';
-                }, 50);
-            }, index * 50);
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.borderColor = 'var(--color-card-border)';
+            });
         });
         
-        clearValidationStates();
-        
-        console.log('✅ Form submission completed successfully');
-        
-    }, 2000);
+        console.log('Service card interactions initialized');
+    } catch (error) {
+        console.error('Error initializing service card interactions:', error);
+    }
 }
 
-function showSuccessMessage(selectedService) {
-    const form = document.getElementById('bookingForm');
-    if (!form) return;
-    
-    // Remove existing success message
-    const existingSuccess = form.querySelector('.success-message');
-    if (existingSuccess) {
-        existingSuccess.remove();
-    }
-    
-    // Get service name for personalized message
-    let serviceName = 'your selected service';
-    const serviceSelect = document.getElementById('service');
-    if (serviceSelect && selectedService) {
-        const selectedOption = serviceSelect.querySelector(`option[value="${selectedService}"]`);
-        if (selectedOption) {
-            serviceName = selectedOption.textContent;
-        }
-    }
-    
-    // Create success message
-    const successDiv = document.createElement('div');
-    successDiv.className = 'success-message';
-    successDiv.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 8px;">
-            <span style="font-size: 20px;">🎵</span>
-            <strong>Thank you for your inquiry!</strong>
-        </div>
-        <div style="font-size: 14px; line-height: 1.5;">
-            I'll get back to you within 24 hours to discuss <strong>${serviceName}</strong> and schedule your session.
-        </div>
-    `;
-    
-    // Add with animation
-    successDiv.style.opacity = '0';
-    successDiv.style.transform = 'translateY(20px)';
-    form.appendChild(successDiv);
-    
-    requestAnimationFrame(() => {
-        successDiv.style.opacity = '1';
-        successDiv.style.transform = 'translateY(0)';
-        successDiv.style.transition = 'all 0.4s ease';
-    });
-    
-    // Scroll to success message
-    setTimeout(() => {
-        successDiv.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 200);
-    
-    // Remove success message after 10 seconds
-    setTimeout(() => {
-        if (successDiv.parentNode) {
-            successDiv.style.opacity = '0';
-            successDiv.style.transform = 'translateY(-20px)';
-            setTimeout(() => {
-                if (successDiv.parentNode) {
-                    successDiv.remove();
-                }
-            }, 400);
-        }
-    }, 10000);
-    
-    console.log('✅ Success message displayed for service:', serviceName);
-}
-
-// Enhanced navbar scroll effect with burgundy ribbon
-function initNavbarScroll() {
-    const navbar = document.querySelector('.navbar');
-    if (!navbar) return;
-    
-    const handleScroll = () => {
-        const currentScrollY = window.scrollY;
+// Initialize animations and interactions
+function initAnimations() {
+    try {
+        // Fixed WhatsApp button interaction
+        const whatsappBtns = document.querySelectorAll('.whatsapp-btn, .whatsapp-link');
         
-        // Add enhanced shadow and background opacity on scroll
-        if (currentScrollY > 50) {
-            navbar.style.background = 'rgba(255, 255, 255, 0.98)';
-            navbar.style.boxShadow = '0 4px 20px rgba(114, 47, 55, 0.08)';
-            navbar.style.borderBottomColor = 'rgba(114, 47, 55, 0.15)';
-        } else {
-            navbar.style.background = 'rgba(255, 255, 255, 0.95)';
-            navbar.style.boxShadow = 'none';
-            navbar.style.borderBottomColor = 'rgba(114, 47, 55, 0.1)';
-        }
-    };
-    
-    window.addEventListener('scroll', debounce(handleScroll, 10));
-    console.log('Enhanced navbar scroll effect initialized with burgundy ribbon');
-}
-
-// Enhanced scroll animations
-function initScrollAnimations() {
-    if (!('IntersectionObserver' in window)) {
-        console.log('IntersectionObserver not supported');
-        return;
-    }
-    
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-    
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
-                entry.target.classList.add('animated');
+        whatsappBtns.forEach(btn => {
+            // Ensure proper WhatsApp URL format
+            const href = btn.getAttribute('href');
+            if (href && href.includes('wa.me')) {
+                btn.setAttribute('target', '_blank');
+                btn.setAttribute('rel', 'noopener noreferrer');
                 
-                // Add special effect for featured service
-                if (entry.target.classList.contains('featured')) {
+                btn.addEventListener('click', function(e) {
+                    console.log('WhatsApp button clicked:', this.href);
+                    
+                    // Add click animation
+                    this.style.transform = 'scale(0.95)';
                     setTimeout(() => {
-                        entry.target.style.background = 'linear-gradient(135deg, rgba(114, 47, 55, 0.03), rgba(114, 47, 55, 0.08))';
-                    }, 200);
-                }
+                        this.style.transform = 'scale(1.05)';
+                        setTimeout(() => {
+                            this.style.transform = '';
+                        }, 150);
+                    }, 100);
+                    
+                    // Ensure it opens properly
+                    try {
+                        window.open(this.href, '_blank', 'noopener,noreferrer');
+                    } catch (error) {
+                        console.warn('WhatsApp fallback');
+                        window.open(this.href, '_blank');
+                    }
+                });
+                
+                btn.addEventListener('mouseenter', function() {
+                    this.style.boxShadow = '0 8px 25px rgba(37, 211, 102, 0.4)';
+                });
+                
+                btn.addEventListener('mouseleave', function() {
+                    this.style.boxShadow = 'var(--shadow-lg)';
+                });
             }
         });
-    }, observerOptions);
-    
-    // Observe elements for animation
-    const animatedElements = document.querySelectorAll('.video-card, .service-card, .testimonial-card, .teacher-card');
-    animatedElements.forEach((el, index) => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(20px)';
-        el.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
-        observer.observe(el);
-    });
-    
-    console.log('Scroll animations initialized for', animatedElements.length, 'elements');
-}
 
-// Fixed active navigation highlighting
-function updateActiveNavigation() {
-    const sections = document.querySelectorAll('section[id]');
-    const navLinks = document.querySelectorAll('.nav-links a[href^="#"]');
-    
-    if (sections.length === 0 || navLinks.length === 0) {
-        console.log('No sections or nav links found for active navigation');
-        return;
-    }
-    
-    let currentSection = '';
-    const scrollPosition = window.scrollY + window.innerHeight / 3;
-    
-    sections.forEach(section => {
-        const sectionTop = section.offsetTop;
-        const sectionHeight = section.offsetHeight;
+        // Initialize other animations
+        initMentorCardAnimations();
+        initStatisticsAnimation();
+        initPhotoPlaceholderInteraction();
+        initServiceSectionAnimations();
+        initAchievementAnimations();
+        initSocialLinkInteractions();
         
-        if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-            currentSection = section.getAttribute('id');
-        }
-    });
-    
-    navLinks.forEach(link => {
-        link.classList.remove('active');
-        const href = link.getAttribute('href');
-        if (href === `#${currentSection}`) {
-            link.classList.add('active');
-            link.style.color = '#722F37';
-        } else {
-            link.style.color = '';
-        }
-    });
+        console.log('Animations initialized');
+    } catch (error) {
+        console.error('Error initializing animations:', error);
+    }
 }
 
-// Handle external links with security
-document.addEventListener('click', function(e) {
-    const link = e.target.closest('a[href^="http"]');
-    if (link && !link.target) {
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
+function initMentorCardAnimations() {
+    try {
+        const mentorCards = document.querySelectorAll('.mentor-card');
+        
+        mentorCards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'all 0.6s ease';
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }, index * 100);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            observer.observe(card);
+        });
+    } catch (error) {
+        console.error('Error initializing mentor card animations:', error);
     }
-});
+}
 
-// Enhanced keyboard navigation
-document.addEventListener('keydown', function(e) {
-    // Close success messages with Escape key
-    if (e.key === 'Escape') {
-        const successMessage = document.querySelector('.success-message');
-        if (successMessage) {
-            successMessage.style.opacity = '0';
-            setTimeout(() => {
-                if (successMessage.parentNode) {
-                    successMessage.remove();
+function initStatisticsAnimation() {
+    try {
+        const statNumbers = document.querySelectorAll('.stat-number, .stat-number-mini');
+        
+        const animateNumber = (element) => {
+            const target = element.textContent;
+            const numericValue = parseInt(target.replace(/[^\d]/g, ''));
+            const suffix = target.replace(/[\d,]/g, '');
+            
+            if (isNaN(numericValue)) return;
+            
+            let current = 0;
+            const increment = numericValue / 30;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= numericValue) {
+                    current = numericValue;
+                    clearInterval(timer);
                 }
-            }, 300);
-        }
+                element.textContent = Math.floor(current).toLocaleString() + suffix;
+            }, 50);
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateNumber(entry.target);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+        
+        statNumbers.forEach(stat => {
+            observer.observe(stat);
+        });
+    } catch (error) {
+        console.error('Error initializing statistics animation:', error);
     }
-});
+}
 
-// Utility functions
+function initPhotoPlaceholderInteraction() {
+    try {
+        const photoPlaceholder = document.querySelector('.photo-placeholder');
+        if (photoPlaceholder) {
+            photoPlaceholder.addEventListener('mouseenter', function() {
+                this.style.borderColor = 'var(--color-burgundy-primary)';
+                this.style.background = 'var(--color-burgundy-light)';
+            });
+            
+            photoPlaceholder.addEventListener('mouseleave', function() {
+                this.style.borderColor = 'var(--color-border)';
+                this.style.background = 'var(--color-surface)';
+            });
+        }
+    } catch (error) {
+        console.error('Error initializing photo placeholder interaction:', error);
+    }
+}
+
+function initServiceSectionAnimations() {
+    try {
+        const serviceSections = document.querySelectorAll('.service-section');
+        
+        serviceSections.forEach((section, index) => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(30px)';
+            section.style.transition = 'all 0.8s ease';
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                        }, index * 200);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.2 });
+            
+            observer.observe(section);
+        });
+    } catch (error) {
+        console.error('Error initializing service section animations:', error);
+    }
+}
+
+function initAchievementAnimations() {
+    try {
+        const achievementItems = document.querySelectorAll('.achievements li');
+        
+        achievementItems.forEach((item, index) => {
+            item.style.opacity = '0';
+            item.style.transform = 'translateX(-20px)';
+            item.style.transition = 'all 0.5s ease';
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateX(0)';
+                        }, index * 100);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.5 });
+            
+            observer.observe(item);
+        });
+    } catch (error) {
+        console.error('Error initializing achievement animations:', error);
+    }
+}
+
+function initSocialLinkInteractions() {
+    try {
+        const socialLinks = document.querySelectorAll('.social-link');
+        
+        socialLinks.forEach(link => {
+            // Ensure external links open in new tab
+            if (link.href && (link.href.includes('youtube.com') || link.href.includes('facebook.com') || link.href.includes('instagram.com'))) {
+                link.setAttribute('target', '_blank');
+                link.setAttribute('rel', 'noopener noreferrer');
+            }
+            
+            link.addEventListener('click', function(e) {
+                // Add click feedback
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+    } catch (error) {
+        console.error('Error initializing social link interactions:', error);
+    }
+}
+
+// Utility function for debouncing
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
@@ -860,164 +594,161 @@ function debounce(func, wait) {
     };
 }
 
-// Add scroll listener for active nav highlighting
-window.addEventListener('scroll', debounce(updateActiveNavigation, 100));
-
-// Add CSS animations on demand
-function addKeyframeAnimations() {
-    if (document.querySelector('#dynamic-animations')) return;
-    
-    const style = document.createElement('style');
-    style.id = 'dynamic-animations';
-    style.textContent = `
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+// Enhanced keyboard navigation
+document.addEventListener('keydown', function(e) {
+    try {
+        // Tab navigation enhancement
+        if (e.key === 'Tab') {
+            document.body.classList.add('keyboard-navigation');
         }
         
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
+        // Number key navigation (1-6 for sections)
+        if (e.key >= '1' && e.key <= '6' && !e.ctrlKey && !e.altKey && !e.metaKey) {
+            const sectionIds = ['home', 'about', 'mentors', 'performances', 'services', 'contact'];
+            const sectionIndex = parseInt(e.key) - 1;
+            
+            if (sectionIds[sectionIndex]) {
+                const targetSection = document.getElementById(sectionIds[sectionIndex]);
+                if (targetSection) {
+                    const headerHeight = 120;
+                    const targetPosition = targetSection.offsetTop - headerHeight;
+                    
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                    
+                    if (history.pushState) {
+                        history.pushState(null, null, '#' + sectionIds[sectionIndex]);
+                    }
+                }
             }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
         }
-        
-        .fade-in-up {
-            animation: fadeInUp 0.6s ease forwards;
-        }
-        
-        .nav-links a.active::after {
-            width: 100% !important;
-        }
-        
-        .social-icon {
-            display: inline-block;
-            transition: transform 0.2s ease;
-        }
-        
-        .instagram-icon {
-            color: #E4405F;
-        }
-        
-        .facebook-icon {
-            color: #1877F2;
-        }
-        
-        .youtube-icon {
-            color: #FF0000;
-        }
-        
-        .service-card {
-            transition: all 0.3s ease;
-        }
-        
-        .offering-item {
-            transition: all 0.2s ease;
-        }
-        
-        .format-item {
-            transition: all 0.2s ease;
-        }
-    `;
-    document.head.appendChild(style);
-}
-
-// Initialize animations
-addKeyframeAnimations();
-
-// Verify sections exist
-function verifySections() {
-    const expectedSections = ['home', 'about', 'mentorship', 'performances', 'services', 'booking'];
-    const missingSections = [];
-    
-    expectedSections.forEach(sectionId => {
-        const section = document.getElementById(sectionId);
-        if (!section) {
-            missingSections.push(sectionId);
-        }
-    });
-    
-    if (missingSections.length > 0) {
-        console.error('Missing sections:', missingSections);
-    } else {
-        console.log('✅ All expected sections found:', expectedSections);
+    } catch (error) {
+        console.error('Error handling keyboard navigation:', error);
     }
-    
-    return missingSections.length === 0;
-}
-
-// Debug verification
-document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(() => {
-        const sectionsValid = verifySections();
-        
-        const criticalElements = {
-            navbar: document.querySelector('.navbar'),
-            navLinks: document.querySelectorAll('.nav-links a'),
-            bookingForm: document.getElementById('bookingForm'),
-            videoCards: document.querySelectorAll('.video-card'),
-            serviceCards: document.querySelectorAll('.service-card'),
-            ctaButton: document.querySelector('.cta-button'),
-            serviceSelect: document.getElementById('service'),
-            teacherCards: document.querySelectorAll('.teacher-card'),
-            socialLinks: document.querySelectorAll('.social-link'),
-            burgundyRibbon: document.querySelector('.burgundy-ribbon')
-        };
-        
-        console.log('✅ Services website elements verification (Fixed):', {
-            sectionsValid,
-            navbar: !!criticalElements.navbar,
-            navLinksCount: criticalElements.navLinks.length,
-            bookingForm: !!criticalElements.bookingForm,
-            videoCardsCount: criticalElements.videoCards.length,
-            serviceCardsCount: criticalElements.serviceCards.length,
-            ctaButton: !!criticalElements.ctaButton,
-            serviceSelect: !!criticalElements.serviceSelect,
-            teacherCardsCount: criticalElements.teacherCards.length,
-            socialLinksCount: criticalElements.socialLinks.length,
-            burgundyRibbon: !!criticalElements.burgundyRibbon
-        });
-        
-        // Verify Facebook URL update
-        const facebookLinks = document.querySelectorAll('a[href*="facebook"]');
-        facebookLinks.forEach(link => {
-            console.log('Facebook link found:', link.href);
-            if (link.href === 'https://www.facebook.com/vignesh.harmonicist/') {
-                console.log('✅ Facebook URL correctly updated');
-            }
-        });
-        
-        // Verify service select options
-        const serviceSelect = document.getElementById('service');
-        if (serviceSelect) {
-            const options = serviceSelect.querySelectorAll('option');
-            console.log('Service select options:', Array.from(options).map(opt => opt.value));
-        }
-        
-        // Test navigation functionality
-        setTimeout(() => {
-            console.log('Testing navigation functionality...');
-            const testLink = document.querySelector('a[href="#services"]');
-            if (testLink) {
-                console.log('Services navigation link found - functionality should work');
-            }
-        }, 1000);
-        
-        // Initial call to set active navigation
-        updateActiveNavigation();
-        
-        console.log('🎯 Services website updates applied successfully (FIXED):');
-        console.log('  ✅ Navigation links fixed for smooth scrolling');
-        console.log('  ✅ Service card auto-selection fixed for all three services');
-        console.log('  ✅ Improved timing for scroll animations');
-        console.log('  ✅ Enhanced interaction feedback');
-        console.log('  ✅ All functionality preserved and enhanced');
-        
-    }, 500);
 });
 
-console.log('✅ Harmonica Services Website JavaScript - FIXED VERSION with Navigation and Service Selection');
+// Remove keyboard navigation class on mouse use
+document.addEventListener('mousedown', function() {
+    try {
+        document.body.classList.remove('keyboard-navigation');
+    } catch (error) {
+        console.error('Error removing keyboard navigation class:', error);
+    }
+});
+
+// Global error handlers
+window.addEventListener('error', function(e) {
+    console.error('Global error:', e.error || e.message);
+});
+
+window.addEventListener('unhandledrejection', function(e) {
+    console.error('Unhandled promise rejection:', e.reason);
+    e.preventDefault(); // Prevent console spam
+});
+
+// Create scroll to top button
+function createScrollToTopButton() {
+    try {
+        const scrollButton = document.createElement('button');
+        scrollButton.innerHTML = '↑';
+        scrollButton.className = 'scroll-to-top';
+        scrollButton.setAttribute('aria-label', 'Scroll to top');
+        scrollButton.style.cssText = `
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--color-burgundy-primary);
+            color: white;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+            box-shadow: var(--shadow-md);
+        `;
+        
+        document.body.appendChild(scrollButton);
+        
+        // Show/hide scroll button based on scroll position
+        let scrollTimeout;
+        window.addEventListener('scroll', function() {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                if (window.pageYOffset > 300) {
+                    scrollButton.style.opacity = '1';
+                    scrollButton.style.visibility = 'visible';
+                } else {
+                    scrollButton.style.opacity = '0';
+                    scrollButton.style.visibility = 'hidden';
+                }
+            }, 10);
+        });
+        
+        // Scroll to top when clicked
+        scrollButton.addEventListener('click', function() {
+            window.scrollTo({ 
+                top: 0, 
+                behavior: 'smooth' 
+            });
+            
+            if (history.pushState) {
+                history.pushState(null, null, '#home');
+            }
+            
+            // Update active nav
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href') === '#home') {
+                    link.classList.add('active');
+                }
+            });
+        });
+        
+        console.log('Scroll to top button created');
+    } catch (error) {
+        console.error('Error creating scroll to top button:', error);
+    }
+}
+
+// Initialize scroll to top button
+setTimeout(() => {
+    createScrollToTopButton();
+}, 1000);
+
+// Debug functions for development
+window.debugSections = function() {
+    try {
+        const sections = document.querySelectorAll('.section');
+        console.log('=== Section Debug ===');
+        console.log('Total sections found:', sections.length);
+        sections.forEach(section => {
+            console.log(`${section.id}: top=${section.offsetTop}px, height=${section.offsetHeight}px`);
+        });
+    } catch (error) {
+        console.error('Debug error:', error);
+    }
+};
+
+window.debugNavigation = function() {
+    try {
+        const navLinks = document.querySelectorAll('.nav-link');
+        console.log('=== Navigation Debug ===');
+        console.log('Total nav links:', navLinks.length);
+        navLinks.forEach((link, index) => {
+            console.log(`${index}: href="${link.getAttribute('href')}", active=${link.classList.contains('active')}`);
+        });
+    } catch (error) {
+        console.error('Debug error:', error);
+    }
+};
+
+console.log('Harmonica website script loaded successfully');
+console.log('Available debug functions: debugSections(), debugNavigation()');
