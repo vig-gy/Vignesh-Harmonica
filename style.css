@@ -2164,3 +2164,10 @@ p {
     letter-spacing: 0.5px;
     color: #555;
 }
+.socialmedia-icon {
+    width: 25px;
+    height: 25px;
+    vertical-align: middle;
+    object-fit: contain;
+    margin-right: 6px;
+}
