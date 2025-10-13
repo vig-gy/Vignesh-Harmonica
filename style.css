@@ -2202,3 +2202,16 @@ p {
     object-fit: contain;
     margin-right: 6px;
 }
+
+.hero-photo {
+    width: 100%;
+    max-width: 400px;      /* Match or slightly exceed the heading width */
+    height: 300px;
+    display: block;
+    margin: 0 auto 24px auto;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.10);
+    object-fit: cover;
+    object-position: center 21%;
+    background: #faf6f8;
+}
