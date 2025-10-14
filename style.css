@@ -916,10 +916,9 @@ p {
 }
 
 .navbar .container {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding-left: 0; /* Remove left padding if needed */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .nav-brand h3 {
@@ -1984,8 +1983,8 @@ p {
   }
   
   .hero {
-    padding: var(--space-48) 0;
-    min-height: auto;
+    margin-top: 72px; /* Adjust if your ribbon/navbar is taller or shorter */
+    padding-top: 0;
   }
   
   .hero-title {
@@ -2048,15 +2047,22 @@ p {
 
   .ribbon-social-links {
     gap: 10px;
-    margin-right: 10px;
+    margin-right: 12px;
     margin-left: 0;
     position: static;
     left: 0;
   }
-
+  .nav-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
   .nav-brand h3 {
-    font-size: 1.1rem;
-    margin-right: 10px;
+    font-size: 2rem;
+    text-align: center;
+    width: 100%;
+    margin: 0 auto;
+    font-weight: 700;
   }
 
   .ribbon-social-icon {
@@ -2299,13 +2305,13 @@ p {
 }
 
 .ribbon-social-links {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    margin-right: 18px;   /* Add gap between icons and your name */
-    margin-left: 0;
-    position: relative;
-    left: 0;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-right: 12px;
+  margin-left: 0;
+  position: static;
+  left: 0;
 }
 
 .ribbon-social-link {
