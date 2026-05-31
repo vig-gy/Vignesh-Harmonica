@@ -1985,6 +1985,8 @@ p {
   .hero {
     margin-top: 72px; /* Adjust if your ribbon/navbar is taller or shorter */
     padding-top: 0;
+    min-height: auto;
+    align-items: center;
   }
   
   .hero-title {

@@ -200,14 +200,16 @@ function initMobileMenu() {
 
 function toggleMobileMenu() {
     const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-    const mobileNav = document.querySelector('.mobile-nav');
+    const mobileNav = document.querySelector('#mobile-nav');
     
     if (mobileMenuToggle && mobileNav) {
+        const isOpen = mobileNav.classList.toggle('hidden') === false;
         mobileMenuToggle.classList.toggle('active');
-        mobileNav.classList.toggle('hidden');
+        mobileMenuToggle.setAttribute('aria-expanded', String(isOpen));
+        mobileNav.setAttribute('aria-hidden', String(!isOpen));
         
         // Prevent body scroll when menu is open
-        if (!mobileNav.classList.contains('hidden')) {
+        if (isOpen) {
             document.body.style.overflow = 'hidden';
         } else {
             document.body.style.overflow = '';
@@ -217,11 +219,13 @@ function toggleMobileMenu() {
 
 function closeMobileMenu() {
     const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
-    const mobileNav = document.querySelector('.mobile-nav');
+    const mobileNav = document.querySelector('#mobile-nav');
     
     if (mobileMenuToggle && mobileNav) {
         mobileMenuToggle.classList.remove('active');
+        mobileMenuToggle.setAttribute('aria-expanded', 'false');
         mobileNav.classList.add('hidden');
+        mobileNav.setAttribute('aria-hidden', 'true');
         document.body.style.overflow = '';
     }
 }

@@ -3,13 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Vignesh Chandrasekaran - Award-winning harmonica artist and instructor with 17+ years of experience. Professional lessons and performances in Singapore and worldwide.">
-    <title>Vignesh Chandrasekaran - Harmonica Artist & Instructor</title>
+    <meta name="description" content="Award-winning harmonica instructor offering harmonica lessons in Singapore and online worldwide. Professional performances, workshops, and private coaching by Vignesh Chandrasekaran.">
+    <meta name="keywords" content="harmonica singapore, harmonica lessons singapore, harmonica instructor singapore, harmonica performance singapore, harmonica teacher singapore">
+    <meta name="robots" content="index, follow">
+    <title>Harmonica Lessons Singapore | Vignesh Chandrasekaran</title>
     <link rel="icon" type="image/png" href="./assets/icon.png">
+    <meta property="og:title" content="Harmonica Lessons Singapore | Vignesh Chandrasekaran">
+    <meta property="og:description" content="Award-winning harmonica lessons in Singapore and online. Book expert harmonica instruction, performances, and workshops today.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="./assets/myphoto1.jpg">
+    <meta property="og:image:alt" content="Harmonica lessons in Singapore by Vignesh Chandrasekaran">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Harmonica Lessons Singapore | Vignesh Chandrasekaran">
+    <meta name="twitter:description" content="Award-winning harmonica lessons in Singapore and online. Book expert harmonica instruction, performances, and workshops today.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./style.css">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "MusicSchool",
+      "name": "Vignesh Chandrasekaran Harmonica Lessons",
+      "description": "Award-winning harmonica instructor offering harmonica lessons in Singapore and online worldwide.",
+      "telephone": "+65 9455 9418",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Singapore",
+        "addressCountry": "SG"
+      },
+      "areaServed": ["Singapore", "Worldwide"],
+      "serviceType": "Harmonica lessons",
+      "keywords": "harmonica lessons Singapore, harmonica Singapore, harmonica instructor Singapore"
+    }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cookie&display=swap" rel="stylesheet">
@@ -18,13 +45,13 @@
     <!-- Burgundy Ribbon -->
     <div class="burgundy-ribbon"></div>
         <!-- <div class="ribbon-social-links">
-            <a href="https://www.instagram.com/vig_gy/" target="_blank" class="ribbon-social-link">
+            <a href="https://www.instagram.com/vig_gy/" target="_blank" rel="noopener noreferrer" class="ribbon-social-link">
                 <img src="./assets/instagram.png" alt="Instagram" class="ribbon-social-icon">
             </a>
-            <a href="https://www.facebook.com/vignesh.harmonicist/" target="_blank" class="ribbon-social-link">
+            <a href="https://www.facebook.com/vignesh.harmonicist/" target="_blank" rel="noopener noreferrer" class="ribbon-social-link">
                 <img src="./assets/facebook.png" alt="Facebook" class="ribbon-social-icon">
             </a>
-            <a href="https://www.youtube.com/@vig_gy" target="_blank" class="ribbon-social-link">
+            <a href="https://www.youtube.com/@vig_gy" target="_blank" rel="noopener noreferrer" class="ribbon-social-link">
                 <img src="./assets/youtube.png" alt="YouTube" class="ribbon-social-icon">
             </a>
         </div> -->
@@ -32,13 +59,13 @@
     <nav class="navbar">
         <div class="container">
             <div class="ribbon-social-links">
-                <a href="https://www.instagram.com/vig_gy/" target="_blank" class="ribbon-social-link">
+                <a href="https://www.instagram.com/vig_gy/" target="_blank" rel="noopener noreferrer" class="ribbon-social-link">
                     <img src="./assets/instagram.png" alt="Instagram" class="ribbon-social-icon">
                 </a>
-                <a href="https://www.facebook.com/vignesh.harmonicist/" target="_blank" class="ribbon-social-link">
+                <a href="https://www.facebook.com/vignesh.harmonicist/" target="_blank" rel="noopener noreferrer" class="ribbon-social-link">
                     <img src="./assets/facebook.png" alt="Facebook" class="ribbon-social-icon">
                 </a>
-                <a href="https://www.youtube.com/@vig_gy" target="_blank" class="ribbon-social-link">
+                <a href="https://www.youtube.com/@vig_gy" target="_blank" rel="noopener noreferrer" class="ribbon-social-link">
                     <img src="./assets/youtube.png" alt="YouTube" class="ribbon-social-icon">
                 </a>
             </div>
@@ -53,14 +80,14 @@
                 <li><a href="#services" class="nav-link">Services</a></li>
                 <li><a href="#contact" class="nav-link">Contact</a></li>
             </ul>
-            <button class="mobile-menu-toggle" aria-label="Toggle mobile menu">
+            <button class="mobile-menu-toggle" aria-label="Toggle mobile menu" aria-controls="mobile-nav" aria-expanded="false">
                 <span></span>
                 <span></span>
                 <span></span>
             </button>
         </div>
         <!-- Mobile Navigation -->
-        <div class="mobile-nav hidden">
+        <div id="mobile-nav" class="mobile-nav hidden" aria-hidden="true">
             <ul class="mobile-nav-links">
                 <li><a href="#home" class="nav-link active">Home</a></li>
                 <li><a href="#about" class="nav-link">About</a></li>
@@ -81,10 +108,10 @@
             <div class="hero">
                 <div class="container">
                     <div class="hero-content">
-                        <img src="assets/myphoto1.jpg" alt="Vignesh Chandrasekaran" class="hero-photo">
+                        <img src="assets/myphoto1.jpg" alt="Vignesh Chandrasekaran teaching harmonica in Singapore" class="hero-photo" loading="lazy">
                         <h1 class="hero-title">Vignesh Chandrasekaran</h1>
-                        <h2 class="hero-subtitle">Harmonica Artist & Instructor</h2>
-                        <p class="hero-tagline">17+ Years of Musical Excellence - Award-Winning Harmonica Artist</p>
+                        <h2 class="hero-subtitle">Singapore Harmonica Artist & Instructor</h2>
+                        <p class="hero-tagline">Award-winning harmonica lessons in Singapore and online, backed by 17+ years of performance and teaching excellence.</p>
                         <div class="hero-achievements">
                             <p class="hero-achievement">2nd Runners' Up - Asia Pacific Harmonica Festival 2022</p>
                             <p class="hero-achievement">Top 80 Contestant - Hong Kong International Chromatic Harmonica Competition 2022</p>
@@ -103,7 +130,7 @@
                                 <span class="stat-label">Total Videos</span>
                             </div>
                         </div>
-                        <a href="https://wa.me/6594559418?text=Hi%20Vignesh%2C%20I%27m%20interested%20in%20your%20harmonica%20services.%20Could%20you%20tell%20me%20more%3F" target="_blank" class="btn btn--primary btn--lg cta-button">Start Your Musical Journey</a>
+                        <a href="https://wa.me/6594559418?text=Hi%20Vignesh%2C%20I%27m%20interested%20in%20your%20harmonica%20services.%20Could%20you%20tell%20me%20more%3F" target="_blank" rel="noopener noreferrer" class="btn btn--primary btn--lg cta-button">Start Your Musical Journey</a>
                     </div>
                 </div>
             </div>
@@ -153,7 +180,7 @@
                             <!-- <div class="photo-placeholder">
                                 <span>Professional Photo</span>                            
                             </div> -->
-                            <img src="./assets/myphoto.jpg" alt="Vignesh Chandrasekaran" class="about-photo-img">
+                            <img src="./assets/myphoto.jpg" alt="Vignesh Chandrasekaran Singapore harmonica lessons" class="about-photo-img" loading="lazy">
                         </div>
                         <div class="about-text">
                             <p style="text-align: justify;">With over 17 years of dedicated musical excellence, Vignesh Chandrasekaran has established himself as Singapore's premier harmonica artist and instructor. His journey began with a passion for musical expression and has evolved into international recognition, culminating in multiple competition achievements.</p>
@@ -177,7 +204,7 @@
                             </div>
 
                             <div class="about-cta">
-                                <a href="https://wa.me/6594559418?text=Hi%20Vignesh%2C%20I%27d%20like%20to%20know%20more%20about%20your%20background%20and%20experience.%20Could%20we%20chat%3F" target="_blank" class="btn btn--primary">Learn More About My Journey</a>
+                                <a href="https://wa.me/6594559418?text=Hi%20Vignesh%2C%20I%27d%20like%20to%20know%20more%20about%20your%20background%20and%20experience.%20Could%20we%20chat%3F" target="_blank" rel="noopener noreferrer" class="btn btn--primary">Learn More About My Journey</a>
                             </div>
                         </div>
                     </div>
@@ -308,7 +335,7 @@
                         </div>
                     </div>
                     <div class="youtube-link">
-                        <a href="https://www.youtube.com/@vig_gy" target="_blank" class="btn btn--outline">View Full YouTube Channel</a>
+                        <a href="https://www.youtube.com/@vig_gy" target="_blank" rel="noopener noreferrer" class="btn btn--outline">View Full YouTube Channel</a>
                     </div>
                 </div>
             </div> -->
@@ -420,7 +447,7 @@
                                 </div>
 
                                 <div class="service-cta">
-                                    <a href="https://wa.me/6594559418?text=Hi%20Vignesh%2C%20I%27m%20interested%20in%20booking%20you%20for%20a%20performance.%20Could%20we%20discuss%20details%3F" target="_blank" class="btn btn--primary whatsapp-cta">Book Performance</a>
+                                    <a href="https://wa.me/6594559418?text=Hi%20Vignesh%2C%20I%27m%20interested%20in%20booking%20you%20for%20a%20performance.%20Could%20we%20discuss%20details%3F" target="_blank" rel="noopener noreferrer" class="btn btn--primary whatsapp-cta">Book Performance</a>
                                 </div>
                             </div>
                         </div>
@@ -473,7 +500,7 @@
                                 </div>
 
                                 <div class="service-cta">
-                                    <a href="https://wa.me/6594559418?text=Hi%20Vignesh%2C%20I%27d%20like%20to%20enquire%20about%20harmonica%20lessons.%20What%20are%20your%20available%20times%3F" target="_blank" class="btn btn--primary whatsapp-cta">Start Lessons</a>
+                                    <a href="https://wa.me/6594559418?text=Hi%20Vignesh%2C%20I%27d%20like%20to%20enquire%20about%20harmonica%20lessons.%20What%20are%20your%20available%20times%3F" target="_blank" rel="noopener noreferrer" class="btn btn--primary whatsapp-cta">Start Lessons</a>
                                 </div>
                             </div>
                         </div>
@@ -512,7 +539,7 @@
                                 </div>
 
                                 <div class="service-cta">
-                                    <a href="https://wa.me/6594559418?text=Hi%20Vignesh%2C%20I%27d%20like%20to%20know%20more%20about%20your%20corporate%20workshop%20offerings." target="_blank" class="btn btn--primary whatsapp-cta">Enquire Now</a>
+                                    <a href="https://wa.me/6594559418?text=Hi%20Vignesh%2C%20I%27d%20like%20to%20know%20more%20about%20your%20corporate%20workshop%20offerings." target="_blank" rel="noopener noreferrer" class="btn btn--primary whatsapp-cta">Enquire Now</a>
                                 </div>
                             </div>
                         </div>
@@ -540,7 +567,7 @@
                                     <div class="contact-details">
                                         <h4>WhatsApp</h4>
                                         <p>Quick response via WhatsApp message</p>
-                                        <a href="https://wa.me/6594559418?text=Hi%20Vignesh%2C%20I%27m%20interested%20in%20your%20harmonica%20services.%20Could%20you%20tell%20me%20more%3F" target="_blank" class="btn btn--primary whatsapp-main">
+                                        <a href="https://wa.me/6594559418?text=Hi%20Vignesh%2C%20I%27m%20interested%20in%20your%20harmonica%20services.%20Could%20you%20tell%20me%20more%3F" target="_blank" rel="noopener noreferrer" class="btn btn--primary whatsapp-main">
                                             Message on WhatsApp
                                         </a>
                                     </div>
@@ -554,24 +581,23 @@
                                         <h4>Follow My Journey</h4>
                                         <p>Stay updated with performances and tutorials</p>
                                         <div class="social-media-links">
-                                            <a href="https://www.instagram.com/vig_gy/" target="_blank" class="social-link">
+                                            <a href="https://www.instagram.com/vig_gy/" target="_blank" rel="noopener noreferrer" class="social-link">
                                                 <span class="social-icon instagram-icon">
                                                     <img src="./assets/instagram.png" alt="Instagram" class="socialmedia-icon">
                                                 </span>
                                                 <span class="social-handle">Instagram</span>
                                             </a>
-                                            <a href="https://www.facebook.com/vignesh.harmonicist/" target="_blank" class="social-link">
+                                            <a href="https://www.facebook.com/vignesh.harmonicist/" target="_blank" rel="noopener noreferrer" class="social-link">
                                                 <span class="social-icon facebook-icon">
                                                     <img src="./assets/facebook.png" alt="Facebook" class="socialmedia-icon">
                                                 </span>
                                                 <span class="social-handle">Facebook</span>
                                             </a>
-                                            <a href="https://www.youtube.com/@vig_gy" target="_blank" class="social-link">
+                                            <a href="https://www.youtube.com/@vig_gy" target="_blank" rel="noopener noreferrer" class="social-link">
                                                 <span class="social-icon youtube-icon">
                                                     <img src="./assets/youtube.png" alt="YouTube" class="socialmedia-icon">
                                                 </span>
                                                 <span class="social-handle">YouTube</span>
-                                            </a>
                                             </a>
                                         </div>
                                     </div>
@@ -612,19 +638,19 @@
                 <div class="footer-section">
                     <h4>Follow My Journey</h4>
                     <div class="social-links">
-                        <a href="https://www.instagram.com/vig_gy/" target="_blank" class="social-link">
+                        <a href="https://www.instagram.com/vig_gy/" target="_blank" rel="noopener noreferrer" class="social-link">
                             <span class="social-icon instagram-icon">
                                 <img src="./assets/instagram.png" alt="Instagram" class="socialmedia-icon">
                             </span>
                             <span class="social-handle">Instagram</span>
                         </a>
-                        <a href="https://www.facebook.com/vignesh.harmonicist/" target="_blank" class="social-link">
+                        <a href="https://www.facebook.com/vignesh.harmonicist/" target="_blank" rel="noopener noreferrer" class="social-link">
                             <span class="social-icon facebook-icon">
                                 <img src="./assets/facebook.png" alt="Facebook" class="socialmedia-icon">
                             </span>
                             <span class="social-handle">Facebook</span>
                         </a>
-                        <a href="https://www.youtube.com/@vig_gy" target="_blank" class="social-link">
+                        <a href="https://www.youtube.com/@vig_gy" target="_blank" rel="noopener noreferrer" class="social-link">
                             <span class="social-icon youtube-icon">
                                 <img src="./assets/youtube.png" alt="YouTube" class="socialmedia-icon">
                             </span>
@@ -650,7 +676,7 @@
 
     <!-- WhatsApp Floating Button -->
     <div class="whatsapp-float">
-        <a href="https://wa.me/6594559418?text=Hi%20Vignesh%2C%20I%27m%20interested%20in%20your%20harmonica%20services.%20Could%20you%20tell%20me%20more%3F" target="_blank" class="whatsapp-button" title="Chat on WhatsApp">
+        <a href="https://wa.me/6594559418?text=Hi%20Vignesh%2C%20I%27m%20interested%20in%20your%20harmonica%20services.%20Could%20you%20tell%20me%20more%3F" target="_blank" rel="noopener noreferrer" class="whatsapp-button" title="Chat on WhatsApp">
             <span class="whatsapp-icon">💬</span>
         </a>
     </div>
