@@ -208,11 +208,17 @@ function toggleMobileMenu() {
         mobileMenuToggle.setAttribute('aria-expanded', String(isOpen));
         mobileNav.setAttribute('aria-hidden', String(!isOpen));
         
-        // Prevent body scroll when menu is open
+        // Prevent body scroll when menu is open (more reliable approach)
         if (isOpen) {
-            document.body.style.overflow = 'hidden';
+            // Use position fixed on body to prevent scroll
+            document.documentElement.style.overflow = 'hidden';
+            document.body.style.position = 'fixed';
+            document.body.style.width = '100%';
         } else {
-            document.body.style.overflow = '';
+            // Restore scrolling
+            document.documentElement.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.width = '';
         }
     }
 }
@@ -226,7 +232,10 @@ function closeMobileMenu() {
         mobileMenuToggle.setAttribute('aria-expanded', 'false');
         mobileNav.classList.add('hidden');
         mobileNav.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
+        // Restore scrolling
+        document.documentElement.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.width = '';
     }
 }
 
