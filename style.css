@@ -854,6 +854,13 @@ body {
 html {
   /* Smooth scroll disabled for mobile performance - using JS for better control */
   scroll-behavior: auto;
+  overscroll-behavior-y: auto;
+  touch-action: pan-y;
+}
+
+body {
+  overscroll-behavior-y: auto;
+  touch-action: pan-y;
 }
 
 /* Smooth scroll only on desktop */
@@ -1034,6 +1041,13 @@ p {
   width: 100%;
   opacity: 1;
   visibility: visible;
+  scroll-margin-top: 110px;
+}
+
+@media (max-width: 768px) {
+  .section {
+    scroll-margin-top: 90px;
+  }
 }
 
 .section-header {

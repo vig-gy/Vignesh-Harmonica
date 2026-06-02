@@ -40,14 +40,10 @@ function initSmoothScrollNavigation() {
                 if (targetSection) {
                     console.log('Scrolling to section:', targetId);
                     
-                    // Calculate offset for fixed navbar
-                    const navbarHeight = document.querySelector('.navbar').offsetHeight + 4; // +4 for ribbon
-                    const targetPosition = targetSection.offsetTop - navbarHeight;
-                    
-                    // Smooth scroll to target
-                    window.scrollTo({
-                        top: targetPosition,
-                        behavior: 'smooth'
+                    // Smooth scroll to target using section scroll-margin for fixed header
+                    targetSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
                     });
                     
                     // Close mobile menu if open
@@ -71,9 +67,10 @@ function initSmoothScrollNavigation() {
             const targetId = hash.substring(1);
             const targetSection = document.getElementById(targetId);
             if (targetSection) {
-                const navbarHeight = document.querySelector('.navbar').offsetHeight + 4;
-                const targetPosition = targetSection.offsetTop - navbarHeight;
-                window.scrollTo({ top: targetPosition, behavior: 'smooth' });
+                targetSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
             }
         } else {
             // Scroll to top for home
@@ -208,17 +205,24 @@ function toggleMobileMenu() {
         mobileMenuToggle.setAttribute('aria-expanded', String(isOpen));
         mobileNav.setAttribute('aria-hidden', String(!isOpen));
         
-        // Prevent body scroll when menu is open (more reliable approach)
+        // Prevent body scroll when menu is open (preserve scroll position)
         if (isOpen) {
-            // Use position fixed on body to prevent scroll
+            const currentScrollY = window.scrollY;
+            document.body.dataset.scrollY = currentScrollY;
             document.documentElement.style.overflow = 'hidden';
             document.body.style.position = 'fixed';
+            document.body.style.top = `-${currentScrollY}px`;
             document.body.style.width = '100%';
         } else {
-            // Restore scrolling
+            // Restore scrolling and return to previous position
+            const savedScrollY = parseInt(document.body.dataset.scrollY || '0', 10);
             document.documentElement.style.overflow = '';
             document.body.style.position = '';
+            document.body.style.top = '';
             document.body.style.width = '';
+            if (!Number.isNaN(savedScrollY)) {
+                window.scrollTo(0, savedScrollY);
+            }
         }
     }
 }
@@ -228,15 +232,20 @@ function closeMobileMenu() {
     const mobileNav = document.querySelector('#mobile-nav');
     
     if (mobileMenuToggle && mobileNav) {
-        mobileMenuToggle.classList.remove('active');
-        mobileMenuToggle.setAttribute('aria-expanded', 'false');
-        mobileNav.classList.add('hidden');
-        mobileNav.setAttribute('aria-hidden', 'true');
-        // Restore scrolling
-        document.documentElement.style.overflow = '';
-        document.body.style.position = '';
-        document.body.style.width = '';
-    }
+            mobileMenuToggle.classList.remove('active');
+            mobileMenuToggle.setAttribute('aria-expanded', 'false');
+            mobileNav.classList.add('hidden');
+            mobileNav.setAttribute('aria-hidden', 'true');
+            // Restore scrolling and previous page position
+            const savedScrollY = parseInt(document.body.dataset.scrollY || '0', 10);
+            document.documentElement.style.overflow = '';
+            document.body.style.position = '';
+            document.body.style.top = '';
+            document.body.style.width = '';
+            if (!Number.isNaN(savedScrollY)) {
+                window.scrollTo(0, savedScrollY);
+            }
+        }
 }
 
 // Video card interactions with guaranteed YouTube opening
@@ -538,12 +547,9 @@ function initKeyboardShortcuts() {
 function scrollToSection(sectionId) {
     const targetSection = document.getElementById(sectionId);
     if (targetSection) {
-        const navbarHeight = document.querySelector('.navbar').offsetHeight + 4;
-        const targetPosition = targetSection.offsetTop - navbarHeight;
-        
-        window.scrollTo({
-            top: targetPosition,
-            behavior: 'smooth'
+        targetSection.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
         });
         
         // Update URL
