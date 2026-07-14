@@ -6,7 +6,6 @@ document.addEventListener('DOMContentLoaded', function() {
         initMobileMenu();
         initThumbnailFallbacks();
         initExternalLinks();
-        initScrollAnimations();
         initActiveNavHighlighting();
         initKeyboardShortcuts();
         initHeroParallax();
@@ -107,31 +106,47 @@ function initActiveNavHighlighting() {
         return;
     }
 
+    // threshold is a fraction of the SECTION's own height, so a 0.3 threshold
+    // can never fire for sections much taller than the viewport (Performances,
+    // Teaching) — 30% of their height never fits on screen at once. Use
+    // threshold: 0 with rootMargin shrunk to a thin band near the top of the
+    // viewport instead, so a section counts as "current" as soon as any part
+    // of it crosses that band, regardless of the section's own height.
     const observerOptions = {
-        threshold: 0.3,
-        rootMargin: '-80px 0px -50% 0px'
+        threshold: 0,
+        rootMargin: '-80px 0px -70% 0px'
     };
+
+    // Track every section currently intersecting rather than reacting to one
+    // entry at a time — a batch can report several sections as intersecting
+    // simultaneously (short sections, fast scrolls), and blindly activating
+    // whichever entry is processed last in the batch means the last section
+    // in DOM order (Mentors, then Contact) always wins regardless of what's
+    // actually on screen. Instead, always highlight the topmost section
+    // (in document order) that's currently intersecting.
+    const intersecting = new Set();
+
+    function updateActiveLink() {
+        const activeSection = Array.from(sections).find(section => intersecting.has(section));
+        if (!activeSection) {
+            return;
+        }
+
+        const sectionId = activeSection.id;
+        navLinks.forEach(link => {
+            link.classList.toggle('active', link.getAttribute('href') === `#${sectionId}`);
+        });
+    }
 
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-            const sectionId = entry.target.id;
-            const navLink = document.querySelector(`.nav-link[href="#${sectionId}"]`);
-
-            if (entry.isIntersecting && navLink) {
-                // Remove active class from all nav links
-                navLinks.forEach(link => link.classList.remove('active'));
-                // Add active class to current nav link
-                navLink.classList.add('active');
-
-                // Update mobile nav too
-                const mobileNavLink = document.querySelector(`.mobile-nav-links .nav-link[href="#${sectionId}"]`);
-                if (mobileNavLink) {
-                    document.querySelectorAll('.mobile-nav-links .nav-link').forEach(link =>
-                        link.classList.remove('active'));
-                    mobileNavLink.classList.add('active');
-                }
+            if (entry.isIntersecting) {
+                intersecting.add(entry.target);
+            } else {
+                intersecting.delete(entry.target);
             }
         });
+        updateActiveLink();
     }, observerOptions);
 
     sections.forEach(section => observer.observe(section));
@@ -275,42 +290,6 @@ function initExternalLinks() {
     document.querySelectorAll('a[href^="http"]').forEach(link => {
         link.target = '_blank';
         link.rel = 'noopener noreferrer';
-    });
-}
-
-// Scroll animations
-function initScrollAnimations() {
-    if (!('IntersectionObserver' in window)) {
-        return;
-    }
-
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0) scale(1)';
-                entry.target.style.filter = 'blur(0px)';
-                entry.target.classList.add('animated');
-            }
-        });
-    }, observerOptions);
-
-    // Find and observe animated elements
-    const animatedElements = document.querySelectorAll(
-        '.video-card, .service-card, .teacher-card, .contact-card, .overview-card, .stat-item, .featured-performance-link'
-    );
-
-    animatedElements.forEach((el, index) => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(24px) scale(0.97)';
-        el.style.filter = 'blur(4px)';
-        el.style.transition = `opacity 0.7s ease ${index * 0.08}s, transform 0.7s ease ${index * 0.08}s, filter 0.7s ease ${index * 0.08}s`;
-        observer.observe(el);
     });
 }
 
