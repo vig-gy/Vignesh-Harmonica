@@ -297,6 +297,36 @@
   --color-info-rgb: var(--color-slate-500-rgb);
 }
 
+/* Self-hosted fonts (variable-width files cover their full weight range) —
+   avoids the fonts.googleapis.com/fonts.gstatic.com round trips that were
+   delaying first render. */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('./assets/fonts/inter-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Playfair Display';
+  font-style: normal;
+  font-weight: 600 700;
+  font-display: swap;
+  src: url('./assets/fonts/playfair-display-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Cookie';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./assets/fonts/cookie-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 /* Base styles */
 html {
   font-size: var(--font-size-base);
@@ -306,6 +336,8 @@ html {
   background-color: var(--color-background);
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
@@ -890,8 +922,7 @@ body::before {
 }
 
 html {
-  /* Smooth scroll disabled for mobile performance - using JS for better control */
-  scroll-behavior: auto;
+  scroll-behavior: smooth;
   overscroll-behavior-y: auto;
   touch-action: pan-y;
 }
@@ -899,13 +930,6 @@ html {
 body {
   overscroll-behavior-y: auto;
   touch-action: pan-y;
-}
-
-/* Smooth scroll only on desktop */
-@media (min-width: 1024px) {
-  html {
-    scroll-behavior: smooth;
-  }
 }
 
 /* Typography */
@@ -1032,12 +1056,17 @@ p {
 
 .mobile-nav-links {
   list-style: none;
-  padding: var(--space-20) 0;
+  padding: var(--space-8) 0;
   margin: 0;
 }
 
 .mobile-nav-links li {
-  padding: var(--space-8) var(--space-24);
+  padding: 0 var(--space-24);
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.mobile-nav-links li:last-child {
+  border-bottom: none;
 }
 
 .nav-links a, .mobile-nav-links a {
@@ -1054,6 +1083,11 @@ p {
   cursor: pointer;
 }
 
+.mobile-nav-links a {
+  font-size: 13px;
+  padding: var(--space-16) 0;
+}
+
 .nav-links a:hover, .mobile-nav-links a:hover {
   color: var(--color-primary);
 }
@@ -1063,7 +1097,7 @@ p {
   font-weight: var(--font-weight-semibold);
 }
 
-.nav-links a::after {
+.nav-links a::after, .mobile-nav-links a::after {
   content: '';
   position: absolute;
   bottom: -2px;
@@ -1075,7 +1109,9 @@ p {
 }
 
 .nav-links a:hover::after,
-.nav-links a.active::after {
+.nav-links a.active::after,
+.mobile-nav-links a:hover::after,
+.mobile-nav-links a.active::after {
   width: 100%;
 }
 

@@ -60,14 +60,16 @@ function initSmoothScrollNavigation() {
                 const targetSection = document.getElementById(targetId);
 
                 if (targetSection) {
+                    // Close the mobile menu first — its display:none toggle is a layout
+                    // change that, if it happens mid-animation, cancels an in-flight
+                    // smooth scroll. Doing it before scrollIntoView avoids that entirely.
+                    closeMobileMenu();
+
                     // Smooth scroll to target using section scroll-margin for fixed header
                     targetSection.scrollIntoView({
                         behavior: 'smooth',
                         block: 'start'
                     });
-
-                    // Close mobile menu if open
-                    closeMobileMenu();
 
                     // Update URL hash
                     history.pushState(null, null, href);
@@ -234,20 +236,25 @@ function closeMobileMenu() {
     const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
     const mobileNav = document.querySelector('#mobile-nav');
 
-    if (mobileMenuToggle && mobileNav) {
-        mobileMenuToggle.classList.remove('active');
-        mobileMenuToggle.setAttribute('aria-expanded', 'false');
-        mobileNav.classList.add('hidden');
-        mobileNav.setAttribute('aria-hidden', 'true');
-        // Restore scrolling and previous page position
-        const savedScrollY = parseInt(document.body.dataset.scrollY || '0', 10);
-        document.documentElement.style.overflow = '';
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.width = '';
-        if (!Number.isNaN(savedScrollY)) {
-            window.scrollTo(0, savedScrollY);
-        }
+    if (!mobileMenuToggle || !mobileNav || mobileNav.classList.contains('hidden')) {
+        // Already closed — bail out without touching the DOM so this is safe
+        // to call unconditionally (e.g. from every nav-link click) without
+        // interrupting an in-flight smooth scroll.
+        return;
+    }
+
+    mobileMenuToggle.classList.remove('active');
+    mobileMenuToggle.setAttribute('aria-expanded', 'false');
+    mobileNav.classList.add('hidden');
+    mobileNav.setAttribute('aria-hidden', 'true');
+
+    const savedScrollY = parseInt(document.body.dataset.scrollY || '0', 10);
+    document.documentElement.style.overflow = '';
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.width = '';
+    if (!Number.isNaN(savedScrollY)) {
+        window.scrollTo(0, savedScrollY);
     }
 }
 
