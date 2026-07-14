@@ -1128,23 +1128,10 @@ p {
 }
 
 .section-header {
-  /* Sticky rather than a static block: the heading stays pinned just below
-     the navbar while its section's content scrolls beneath it, then releases
-     once the section ends — the layered, no-hard-seam transition apple.com
-     uses between sections, instead of a decorative divider line. */
-  position: sticky;
-  top: 110px;
-  z-index: 2;
+  position: relative;
   background: var(--color-surface);
   padding: var(--space-64) 0 var(--space-48);
   text-align: center;
-  box-shadow: var(--shadow-sm);
-}
-
-@media (max-width: 768px) {
-  .section-header {
-    top: 90px;
-  }
 }
 
 .section-eyebrow {
